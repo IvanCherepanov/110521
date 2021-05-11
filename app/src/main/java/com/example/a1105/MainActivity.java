@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY = "pdct.1.1.20210511T133909Z.819b5e0869a35da4.e73ffd702ff9833179cbe4850371671124a79d5b";
     private EditText editText;
     private TextView textView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +51,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void doRequest() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(URL)
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         YandexAPI yandexAPI=retrofit.create((YandexAPI.class));
